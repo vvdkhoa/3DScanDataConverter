@@ -1,0 +1,12 @@
+[
+  {
+    "FreeCAD_path": "D:/Program Files/FreeCAD 0.18/bin",
+
+    "hc_laplacian_smooth_time": 2,
+    "poisson_iters": 8,
+
+    "input_path": "",
+    "output_path": "",
+    "processing_path": ""
+  }
+]
