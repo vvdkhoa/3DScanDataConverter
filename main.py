@@ -42,7 +42,7 @@ def mesh_filter(my_settings):
         visiblelayer=False, depth=10, fulldepth=5, cgdepth=0, scale=1.1, samplespernode=1.5, pointweight=4,
         iters=my_settings['poisson_iters'],
         confidence=False, preclean=True)     # preclean= False
-    ms.simplification_quadric_edge_collapse_decimation(targetfacenum=20000)
+    ms.simplification_quadric_edge_collapse_decimation(targetfacenum=my_settings['targetfacenum'])
 
     ms.save_current_mesh("{}\\filtered_mesh.stl".format(my_settings['processing_path']))
 

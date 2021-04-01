@@ -4,6 +4,7 @@
 
     "hc_laplacian_smooth_time": 2,
     "poisson_iters": 8,
+    "targetfacenum": 20000,
 
     "input_path": "",
     "output_path": "",
