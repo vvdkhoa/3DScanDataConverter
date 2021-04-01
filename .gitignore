@@ -1,1 +1,3 @@
-CAD_DATA*
+*.stl
+*.iges
+*.step

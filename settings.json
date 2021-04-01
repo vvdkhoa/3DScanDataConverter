@@ -4,7 +4,10 @@
 
     "hc_laplacian_smooth_time": 2,
     "poisson_iters": 8,
-    "targetfacenum": 20000,
+    "targetfacenum": 10000,
+
+    "shape_tolerance": 0.100000,
+    "export_file_type": ["iges", "step"],
 
     "input_path": "",
     "output_path": "",

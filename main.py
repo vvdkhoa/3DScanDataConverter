@@ -14,9 +14,9 @@ if my_settings['processing_path'] == '':
 # https://github.com/cnr-isti-vclab/PyMeshLab
 # https://pymeshlab.readthedocs.io/en/latest/filter_list.html#apply-filter-parameters
 import pymeshlab
+import pymeshlab    # Import 2 times to avoid exception
 
 # FreeCad
-# FREECADPATH = 'D:/Program Files/FreeCAD 0.18/bin/'
 import sys
 sys.path.append(my_settings['FreeCAD_path'])
 import FreeCAD
@@ -24,48 +24,55 @@ import Mesh
 import Part
 
 
-# Mesh Data Filter using Meshlab
+# Mesh Data Filter Using Meshlab
 def mesh_filter(my_settings):
 
-    print_devide('Mesh Data Processing')
+    my_print('Mesh Data Processing')
 
+    # Read stl file
     ms = pymeshlab.MeshSet()
     ms.load_new_mesh("{}\\input.stl".format(my_settings['input_path']))
 
-
+    # Close vertices
     ms.merge_close_vertices(threshold=1)
 
+    # HC Smooth
     for i in range(my_settings['hc_laplacian_smooth_time']):
         ms.hc_laplacian_smooth()
 
+    # Filling holes poisson
     ms.surface_reconstruction_screened_poisson(
         visiblelayer=False, depth=10, fulldepth=5, cgdepth=0, scale=1.1, samplespernode=1.5, pointweight=4,
         iters=my_settings['poisson_iters'],
         confidence=False, preclean=True)     # preclean= False
+    
+    # Reduce face numble
     ms.simplification_quadric_edge_collapse_decimation(targetfacenum=my_settings['targetfacenum'])
 
+    # Save project
     ms.save_current_mesh("{}\\filtered_mesh.stl".format(my_settings['processing_path']))
 
 
 # Convert data from stl to iges using freeCad
 def convert_stl_iges(my_settings):
 
-    print_devide('Convert SLT to IGES')
+    my_print('Convert Data')
 
-    Mesh.open(u"D:/OneDrive/Programing/CAD/3DScan/filtered_mesh.stl")
+    # Read STL
+    input_path = "{}\\filtered_mesh.stl".format(my_settings['processing_path'])
+    Mesh.open(u"{}".format(input_path))
     App.setActiveDocument("Unnamed") #
     App.ActiveDocument=App.getDocument("Unnamed") #
 
-    # makeShape
+    # MakeShape
     FreeCAD.getDocument("Unnamed").addObject("Part::Feature","filtered_mesh001")
     __shape__=Part.Shape()
-    __shape__.makeShapeFromMesh(FreeCAD.getDocument("Unnamed").getObject("filtered_mesh").Mesh.Topology,0.100000)
+    __shape__.makeShapeFromMesh(FreeCAD.getDocument("Unnamed").getObject("filtered_mesh").Mesh.Topology,my_settings['shape_tolerance'])
     FreeCAD.getDocument("Unnamed").getObject("filtered_mesh001").Shape=__shape__
-    #
     FreeCAD.getDocument("Unnamed").getObject("filtered_mesh001").purgeTouched()  # Marks the object as unchanged
     # del __shape__
 
-    # To solid
+    # Convert To solid
     __s__=App.ActiveDocument.filtered_mesh001.Shape
     __s__=Part.Solid(__s__)
     __o__=App.ActiveDocument.addObject("Part::Feature","filtered_mesh001_solid")
@@ -80,28 +87,31 @@ def convert_stl_iges(my_settings):
     else:
         __objs__.append(FreeCAD.getDocument("Unnamed").getObject("filtered_mesh001"))  # If only surface available
 
-    # Export file
-    save_path = "{}\\sample.iges".format(my_settings['output_path'])
-    Part.export(__objs__,u"{}".format(save_path))
+    # Export
+    for file_type in my_settings['export_file_type']:
+        save_path = "{}\\sample.{}".format(my_settings['output_path'], file_type)
+        my_print("Export {} File :\br{}".format(file_type, save_path))
+        Part.export(__objs__,u"{}".format(save_path))
 
 
-def print_devide(text):
+def my_print(text):
     print('''
 ++++++++++++++++++++++++++++++++++
-+++++ {} ++++++++++++
++ {}
 ++++++++++++++++++++++++++++++++++
           '''.format(text))
 
 if __name__ == '__main__':
 
-    print_devide('SETTINGS')
-    print_devide(my_settings)
+    my_print('MY SETTINGS')
+    for key in my_settings:
+        print("{}: {}".format(key, my_settings[key]))
 
     mesh_filter(my_settings)
 
     convert_stl_iges(my_settings)
 
-    print_devide('FINISH')
+    my_print('COMPLETED')
 
 
 # https://github.com/cnr-isti-vclab/PyMeshLab
@@ -115,5 +125,3 @@ if __name__ == '__main__':
 # Visual Computing Lab  http://vcg.isti.cnr.it                    /\/|
 # ISTI - Italian National Research Council                           |
 # Copyright(C) 2020
-
-
