@@ -23,6 +23,9 @@ import FreeCAD
 import Mesh
 import Part
 
+# Not using but need add for pyinstaller
+# import numpy as np
+
 
 # Mesh Data Filter Using Meshlab
 def mesh_filter(my_settings):
@@ -31,6 +34,7 @@ def mesh_filter(my_settings):
 
     # Read stl file
     ms = pymeshlab.MeshSet()
+    print("{}\\input.stl".format(my_settings['input_path']))
     ms.load_new_mesh("{}\\input.stl".format(my_settings['input_path']))
 
     # Close vertices
