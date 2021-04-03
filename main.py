@@ -11,9 +11,7 @@ if my_settings['processing_path'] == '':
     my_settings['processing_path'] = 'CAD_DATA/ProcessingFile'
 
 # Meshlab
-# https://github.com/cnr-isti-vclab/PyMeshLab
-# https://pymeshlab.readthedocs.io/en/latest/filter_list.html#apply-filter-parameters
-# import pymeshlab
+import pymeshlab
 import pymeshlab    # Import 2 times to avoid exception
 
 # FreeCad
@@ -114,16 +112,4 @@ if __name__ == '__main__':
     convert_stl_iges(my_settings)
 
     my_print('COMPLETED')
-
-
-# https://github.com/cnr-isti-vclab/PyMeshLab
-# PyMeshLab
-# All rights reserved.
-
-# VCGLib  http://www.vcglib.net                                     o o
-# Visual and Computer Graphics Library                            o     o
-#                                                               _   O  _
-# Paolo Cignoni                                                    \/)\/
-# Visual Computing Lab  http://vcg.isti.cnr.it                    /\/|
-# ISTI - Italian National Research Council                           |
-# Copyright(C) 2020
+    
