@@ -13,7 +13,7 @@ if my_settings['processing_path'] == '':
 # Meshlab
 # https://github.com/cnr-isti-vclab/PyMeshLab
 # https://pymeshlab.readthedocs.io/en/latest/filter_list.html#apply-filter-parameters
-import pymeshlab
+# import pymeshlab
 import pymeshlab    # Import 2 times to avoid exception
 
 # FreeCad
@@ -24,8 +24,7 @@ import Mesh
 import Part
 
 # Not using but need add for pyinstaller
-# import numpy as np
-
+# import numpy
 
 # Mesh Data Filter Using Meshlab
 def mesh_filter(my_settings):
@@ -34,7 +33,6 @@ def mesh_filter(my_settings):
 
     # Read stl file
     ms = pymeshlab.MeshSet()
-    print("{}\\input.stl".format(my_settings['input_path']))
     ms.load_new_mesh("{}\\input.stl".format(my_settings['input_path']))
 
     # Close vertices
