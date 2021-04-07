@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.font as tkFont
+from time import sleep
 
 # Read setting
 import json
@@ -7,6 +8,7 @@ with open('settings.json') as json_file:
     json_str = json_file.read()
     my_settings = json.loads(json_str)#[0]
 
+from main import mesh_filter, convert_stl_iges
 
 ##############################################
 class App:
@@ -84,8 +86,9 @@ class App:
         GButton_878.place(x=240,y=210,width=145,height=30)
         GButton_878["command"] = self.GButton_878_command
 
-        ########################################################
-        #self.GMessage_707=tk.Message(root)
+        # Message #######################################
+        self.GMessage_707_Var = tk.StringVar()
+        self.GMessage_707_Var.set('Message')
         self.GMessage_707=tk.Label(root)
         ft = tkFont.Font(family='Times',size=10)
         self.GMessage_707["font"] = ft
@@ -94,29 +97,39 @@ class App:
         self.GMessage_707["text"] = "Message"
         self.GMessage_707["relief"] = "ridge"
         self.GMessage_707.place(x=240,y=30,width=145,height=136)
-        ########################################################
+        self.GMessage_707['textvariable'] = self.GMessage_707_Var
 
-        GCheckBox_402=tk.Checkbutton(root)
+        # IGES check box #################################
+        # Default Value
+        if 'iges' in my_settings['export_file_type']:
+            self.GCheckBox_402_Var = tk.IntVar(value=1)
+        else:
+            self.GCheckBox_402_Var = tk.IntVar(value=0)
+        self.GCheckBox_402=tk.Checkbutton(root)
         ft = tkFont.Font(family='Times',size=10)
-        GCheckBox_402["font"] = ft
-        GCheckBox_402["fg"] = "#333333"
-        GCheckBox_402["justify"] = "center"
-        GCheckBox_402["text"] = "IGES"
-        GCheckBox_402.place(x=310,y=170,width=58,height=30)
-        GCheckBox_402["offvalue"] = "0"
-        GCheckBox_402["onvalue"] = "1"
-        GCheckBox_402["command"] = self.GCheckBox_402_command
+        self.GCheckBox_402["font"] = ft
+        self.GCheckBox_402["fg"] = "#333333"
+        self.GCheckBox_402["justify"] = "center"
+        self.GCheckBox_402["text"] = "IGES"
+        self.GCheckBox_402.place(x=310,y=170,width=58,height=30)
+        self.GCheckBox_402["variable"] = self.GCheckBox_402_Var
+        self.GCheckBox_402["command"] = self.GCheckBox_402_command
 
-        GCheckBox_75=tk.Checkbutton(root)
+        # STEP check box #################################
+        # Default Value
+        if 'step' in my_settings['export_file_type']:
+            self.GCheckBox_75_Var = tk.IntVar(value=1)
+        else:
+            self.GCheckBox_75_Var = tk.IntVar(value=0)
+        self.GCheckBox_75=tk.Checkbutton(root)
         ft = tkFont.Font(family='Times',size=10)
-        GCheckBox_75["font"] = ft
-        GCheckBox_75["fg"] = "#333333"
-        GCheckBox_75["justify"] = "center"
-        GCheckBox_75["text"] = "STEP"
-        GCheckBox_75.place(x=240,y=170,width=58,height=31)
-        GCheckBox_75["offvalue"] = "0"
-        GCheckBox_75["onvalue"] = "1"
-        GCheckBox_75["command"] = self.GCheckBox_75_command
+        self.GCheckBox_75["font"] = ft
+        self.GCheckBox_75["fg"] = "#333333"
+        self.GCheckBox_75["justify"] = "center"
+        self.GCheckBox_75["text"] = "STEP"
+        self.GCheckBox_75.place(x=240,y=170,width=58,height=31)
+        self.GCheckBox_75["variable"] = self.GCheckBox_75_Var
+        self.GCheckBox_75["command"] = self.GCheckBox_75_command
 
         GLabel_601=tk.Label(root)
         ft = tkFont.Font(family='Times',size=12)
@@ -143,7 +156,6 @@ class App:
         self.GLineEdit_253["justify"] = "left"
         self.GLineEdit_253["text"] = ""
         self.GLineEdit_253.place(x=130,y=30,width=95,height=25)
-        #self.GLineEdit_253["show"] = "222"
         self.GLineEdit_253["invalidcommand"] = "Command1"
         self.GLineEdit_253["validatecommand"] = "Command2"
         self.GLineEdit_253.insert(0, my_settings['hc_laplacian_smooth_time'])
@@ -210,19 +222,60 @@ class App:
         self.GLineEdit_517.insert(0, my_settings['output_path'])
 
     def GButton_878_command(self, *args):
+
         print("Data Convert")
         
+        # Get enter data from UI
         hc_laplacian_smooth_time = int(self.GLineEdit_253.get())
-        poisson_iters = int()
-        
+        poisson_iters = int(self.GLineEdit_770.get())
+        targetfacenum = int(self.GLineEdit_472.get())
+        shape_tolerance = float(self.GLineEdit_658.get())
+        FreeCAD_path = self.GLineEdit_533.get()
+        input_path = self.GLineEdit_664.get()
+        output_path = self.GLineEdit_517.get()
+
+        # Save Setting Data to Json
+        json_edit('settings.json', 'hc_laplacian_smooth_time', hc_laplacian_smooth_time)
+        json_edit('settings.json', 'poisson_iters', poisson_iters)
+        json_edit('settings.json', 'targetfacenum', targetfacenum)
+        json_edit('settings.json', 'shape_tolerance', shape_tolerance)
+        json_edit('settings.json', 'FreeCAD_path', FreeCAD_path)
+        json_edit('settings.json', 'input_path', input_path)
+        json_edit('settings.json', 'output_path', output_path)
+
+        # Meshlab
+        mesh_filter()
+
+        # FreeCAD
+        convert_stl_iges()
 
 
+    # IGES add or remove
     def GCheckBox_402_command(self):
-        print("Iges selected")
+        export_file_type = my_settings['export_file_type']
+        if self.GCheckBox_402_Var.get() == 1:
+            if 'iges' not in export_file_type:
+                export_file_type.append('iges')
+                print('Add IGES')
+        else:
+            if 'iges' in export_file_type:
+                export_file_type.remove('iges')
+                print('Remove IGES')
+        json_edit('settings.json', 'export_file_type', export_file_type)
 
 
+    # Step add or remove
     def GCheckBox_75_command(self):
-        print("Step selected")
+        export_file_type = my_settings['export_file_type']
+        if self.GCheckBox_75_Var.get() == 1:
+            if 'step' not in export_file_type:
+                export_file_type.append('step')
+                print('Add STEP')
+        else:
+            if 'step' in export_file_type:
+                export_file_type.remove('step')
+                print('Remove STEP')
+        json_edit('settings.json', 'export_file_type', export_file_type)
 
 
     def Command1(self):
@@ -233,6 +286,9 @@ class App:
 
     def GLineEdit_253_get(self):
         print('aaaaa')
+    
+    def send_message(self, message):
+        self.GMessage_707_Var.set(message)
 
 
 ##############################################
@@ -242,18 +298,17 @@ def json_edit(json_path, key, value):
     a_file = open(json_path, "r")
     json_object = json.load(a_file)
     a_file.close()
-    print(json_object)
 
     # Update
     json_object[key] = value
-    a_file = open("settings.json", "w")
+    a_file = open(json_path, "w")
     json.dump(json_object, a_file)
     a_file.close()
-
 
 ##############################################
 if __name__ == "__main__":
     
     root = tk.Tk()
     app = App(root)
+
     root.mainloop()

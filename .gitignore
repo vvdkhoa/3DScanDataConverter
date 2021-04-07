@@ -2,3 +2,4 @@
 *.iges
 *.step
 *__pycache__
+*.idea
