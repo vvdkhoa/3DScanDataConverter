@@ -6,7 +6,7 @@ with open('settings.json') as json_file:
 
 # Meshlab
 import pymeshlab
-import pymeshlab    # Import 2 times to avoid exception
+# import pymeshlab    # Import 2 times to avoid exception
 
 
 # Import HELP function
