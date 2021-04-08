@@ -2,20 +2,43 @@ import tkinter as tk
 import tkinter.font as tkFont
 from time import sleep
 
-# Read setting
+# For run .bat file
+from subprocess import Popen
+
+# Read json settings
 import json
 with open('settings.json') as json_file:
     json_str = json_file.read()
     my_settings = json.loads(json_str)#[0]
 
-from main import mesh_filter, convert_stl_iges
+# Root Path Setting #####################
+import os
+root_path = os.getcwd()
+#print('Root Path: ' + str(root_path))
+import sys
+sys.path.insert(1, root_path)
 
-##############################################
-class App:
+# Default CAD Directory Setting #########
+if my_settings['input_path'] == '':
+    my_settings['input_path'] = str(os.path.join(root_path, 'CAD_DATA\\InputFile'))
+if my_settings['output_path'] == '':
+    my_settings['output_path'] = str(os.path.join(root_path, 'CAD_DATA/OutputFile'))
+if my_settings['processing_path'] == '':
+    my_settings['processing_path'] = str(os.path.join(root_path, 'CAD_DATA/ProcessingFile'))
+
+# Meshlab function
+from converter1 import mesh_filter
+
+# Import HELP function
+from my_help import my_print
+
+
+#########################################
+class UIApp:
     
     def __init__(self, root):
         #setting title
-        root.title("undefined")
+        root.title("Scan Data Converter")
         #setting window size
         width=392
         height=249
@@ -221,36 +244,7 @@ class App:
         self.GLineEdit_517.place(x=130,y=210,width=95,height=25)
         self.GLineEdit_517.insert(0, my_settings['output_path'])
 
-    def GButton_878_command(self, *args):
-
-        print("Data Convert")
-        
-        # Get enter data from UI
-        hc_laplacian_smooth_time = int(self.GLineEdit_253.get())
-        poisson_iters = int(self.GLineEdit_770.get())
-        targetfacenum = int(self.GLineEdit_472.get())
-        shape_tolerance = float(self.GLineEdit_658.get())
-        FreeCAD_path = self.GLineEdit_533.get()
-        input_path = self.GLineEdit_664.get()
-        output_path = self.GLineEdit_517.get()
-
-        # Save Setting Data to Json
-        json_edit('settings.json', 'hc_laplacian_smooth_time', hc_laplacian_smooth_time)
-        json_edit('settings.json', 'poisson_iters', poisson_iters)
-        json_edit('settings.json', 'targetfacenum', targetfacenum)
-        json_edit('settings.json', 'shape_tolerance', shape_tolerance)
-        json_edit('settings.json', 'FreeCAD_path', FreeCAD_path)
-        json_edit('settings.json', 'input_path', input_path)
-        json_edit('settings.json', 'output_path', output_path)
-
-        # Meshlab
-        mesh_filter()
-
-        # FreeCAD
-        convert_stl_iges()
-
-
-    # IGES add or remove
+    # iges add or remove
     def GCheckBox_402_command(self):
         export_file_type = my_settings['export_file_type']
         if self.GCheckBox_402_Var.get() == 1:
@@ -286,9 +280,46 @@ class App:
 
     def GLineEdit_253_get(self):
         print('aaaaa')
-    
-    def send_message(self, message):
+
+    # Send message
+    def send_message_(self, message):
         self.GMessage_707_Var.set(message)
+
+    # Data Converter Button Click
+    def GButton_878_command(self, *args):
+        
+        # Get enter data from UI
+        hc_laplacian_smooth_time = int(self.GLineEdit_253.get())
+        poisson_iters = int(self.GLineEdit_770.get())
+        targetfacenum = int(self.GLineEdit_472.get())
+        shape_tolerance = float(self.GLineEdit_658.get())
+        FreeCAD_path = self.GLineEdit_533.get()
+        input_path = self.GLineEdit_664.get()
+        output_path = self.GLineEdit_517.get()
+
+        # Save Setting Data to Json
+        json_edit('settings.json', 'hc_laplacian_smooth_time', hc_laplacian_smooth_time)
+        json_edit('settings.json', 'poisson_iters', poisson_iters)
+        json_edit('settings.json', 'targetfacenum', targetfacenum)
+        json_edit('settings.json', 'shape_tolerance', shape_tolerance)
+        json_edit('settings.json', 'FreeCAD_path', FreeCAD_path)
+        json_edit('settings.json', 'input_path', input_path)
+        json_edit('settings.json', 'output_path', output_path)
+
+        # Meshlab
+        mesh_filter(my_settings)
+
+        # FreeCAD run bat file because FreeCAD App conflict with Tkinter
+        p = Popen("run_converter2.bat", cwd=r'C:\\Users\\Y32840\\Desktop\\ScanDataConverter')
+        stdout, stderr = p.communicate()
+
+
+
+
+
+##############################################
+def send_message(app, message):
+    app.send_message_(message)
 
 
 ##############################################
@@ -304,11 +335,19 @@ def json_edit(json_path, key, value):
     a_file = open(json_path, "w")
     json.dump(json_object, a_file)
     a_file.close()
+    
 
 ##############################################
 if __name__ == "__main__":
-    
-    root = tk.Tk()
-    app = App(root)
 
+    # Show settings
+    my_print('MY SETTINGS')
+    for key in my_settings:
+        print('++++++++++++++++++++++++++++++++++++++')
+        print("{}: {}".format(key, my_settings[key]))
+
+    # Run UI
+    root = tk.Tk()
+    app = UIApp(root)
+    send_message(app, 'Meshlap Processing')
     root.mainloop()
