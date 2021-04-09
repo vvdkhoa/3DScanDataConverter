@@ -1,27 +1,26 @@
-# Read setting
-import json
-with open('settings.json') as json_file:
-    json_str = json_file.read()
-    my_settings = json.loads(json_str)
-
 # Meshlab
 import pymeshlab
 # import pymeshlab    # Import 2 times to avoid exception
 
+import ntpath
+
 
 # Import HELP function
-from my_help import my_print
+from my_help import my_print, read_my_settings
 
 
 ##################################
 # Mesh Data Filter Using Meshlab
-def mesh_filter(my_settings):
+def mesh_filter(file_path):
 
     my_print('Mesh Data Processing')
 
+    my_settings = read_my_settings()
+
     # Read stl file
     ms = pymeshlab.MeshSet()
-    ms.load_new_mesh("{}\\input.stl".format(my_settings['input_path']))
+    #ms.load_new_mesh("{}\\input.stl".format(my_settings['input_path']))
+    ms.load_new_mesh(file_path)
 
     # Close vertices
     ms.merge_close_vertices(threshold=1)
@@ -40,21 +39,15 @@ def mesh_filter(my_settings):
     ms.simplification_quadric_edge_collapse_decimation(targetfacenum=my_settings['targetfacenum'])
 
     # Save project
-    ms.save_current_mesh("{}\\filtered_mesh.stl".format(my_settings['processing_path']))
+    input_file_name = ntpath.basename(file_path).split('.')[0]
+    
+    save_path = "{}\\{}_Converted.stl".format(my_settings['processing_path'], input_file_name)
+    ms.save_current_mesh(save_path)
+
+    return save_path
 
     
 ##################################
 if __name__ == '__main__':
+    
     pass
-
-    #my_print('MY SETTINGS')
-    #for key in my_settings:
-    #    print("{}: {}".format(key, my_settings[key]))
-
-    # print('Input path' + my_settings['input_path'])
-
-    #mesh_filter(my_settings)
-
-    #convert_stl_iges(my_settings)
-
-    #my_print('COMPLETED')
