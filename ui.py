@@ -30,7 +30,7 @@ if my_settings['processing_path'] == '':
 from converter1 import mesh_filter
 
 # Import HELP function
-from my_help import my_print
+from my_help import my_print, read_my_settings, absoluteFilePaths
 
 
 #########################################
@@ -325,28 +325,53 @@ class UIApp:
         json_edit('settings.json', 'input_path', input_path)
         json_edit('settings.json', 'output_path', output_path)
 
+    #######################################
     # Clear Input Button Click
     def GButton_290_command(self):
         print("Clear Input")
+        
+        input_files = get_input_file()
+        print(input_files)
 
     # Data Converter Button Click
     def GButton_878_command(self, *args):
 
         # Save setting
         self.GButton_657_command()
+
+        # Get Input Files List
+        input_files = get_input_file()
         
         # Meshlab
         self.GMessage_707_Var.set('Meshlap\nProcessing')
-        mesh_filter(my_settings)
+        for file_path in input_files:
+            
+            mesh_filter(file_path)
 
-        # Call run bat file (Freecad Convert) because FreeCAD App conflict with Tkinter
+        # Freecad Convert: Call run bat file because FreeCAD App conflict with Tkinter
         self.GMessage_707_Var.set('FreeCAD\nProcessing')
         p = Popen("run_converter2.bat", cwd=r"{}".format(root_path))
-        # p = Popen("run_converter2.bat", cwd=r'C:\\Users\\Y32840\\Desktop\\ScanDataConverter')
         stdout, stderr = p.communicate()
 
         # Send message
         self.GMessage_707_Var.set('Completed')
+
+
+##############################################  
+def get_input_file():
+
+    # Read Input path
+    my_settings = read_my_settings()
+    input_path = my_settings['input_path']
+
+    all_files = absoluteFilePaths(input_path)
+
+    input_files = []
+    for file in all_files:
+        file_type = os.path.splitext(file)[1]
+        if os.path.splitext(file)[1] in ['.3ds', '.ply', '.stl', '.obj', '.qobj', '.off', '.ptx']:
+            input_files.append(file)
+    return input_files
 
 
 ##############################################
