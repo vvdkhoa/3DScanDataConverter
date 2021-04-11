@@ -1,15 +1,19 @@
+import ntpath
 import tkinter as tk
+from tkinter.constants import END
 import tkinter.font as tkFont
+from tkinter import messagebox
 from time import sleep
+import json
 
 # For run .bat file
 from subprocess import Popen
 
 # Read json settings
-import json
-with open('settings.json') as json_file:
-    json_str = json_file.read()
-    my_settings = json.loads(json_str)#[0]
+# import json
+# with open('settings.json') as json_file:
+#     json_str = json_file.read()
+#     my_settings = json.loads(json_str)#[0]
 
 # Root Path Setting #####################
 import os
@@ -18,19 +22,22 @@ root_path = os.getcwd()
 import sys
 sys.path.insert(1, root_path)
 
-# Default CAD Directory Setting #########
-if my_settings['input_path'] == '':
-    my_settings['input_path'] = str(os.path.join(root_path, 'CAD_DATA\\InputFile'))
-if my_settings['output_path'] == '':
-    my_settings['output_path'] = str(os.path.join(root_path, 'CAD_DATA\\OutputFile'))
-if my_settings['processing_path'] == '':
-    my_settings['processing_path'] = str(os.path.join(root_path, 'CAD_DATA\\ProcessingFile'))
+# # Default CAD Directory Setting #########
+# if my_settings['input_path'] == '':
+#     my_settings['input_path'] = str(os.path.join(root_path, '..\\CAD_DATA\\InputFile'))
+# if my_settings['output_path'] == '':
+#     my_settings['output_path'] = str(os.path.join(root_path, '..\\CAD_DATA\\OutputFile'))
+# if my_settings['processing_path'] == '':
+#     my_settings['processing_path'] = str(os.path.join(root_path, '..\\CAD_DATA\\ProcessingFile'))
 
 # Meshlab function
 from converter1 import mesh_filter
 
 # Import HELP function
-from my_help import my_print, read_my_settings, absoluteFilePaths
+from my_help import my_print, read_my_settings, absoluteFilePaths, clear_folder
+
+# Read json settings
+my_settings = read_my_settings()
 
 
 #########################################
@@ -42,7 +49,7 @@ class UIApp:
         #setting icon
         root.iconbitmap(os.path.join(root_path, 'Icons\\icon.ico'))
         #setting window size
-        width=420
+        width=500
         height=400
         screenwidth = root.winfo_screenwidth()
         screenheight = root.winfo_screenheight()
@@ -104,6 +111,15 @@ class UIApp:
         GLabel_903["anchor"] = 'w'
         GLabel_903.place(x=10,y=150,width=150,height=40)
 
+        GLabel_980=tk.Label(root)
+        ft = tkFont.Font(family='Times',size=14)
+        GLabel_980["font"] = ft
+        GLabel_980["fg"] = "#333333"
+        GLabel_980["justify"] = "left"
+        GLabel_980["text"] = "FILE LIST:"
+        GLabel_980["anchor"] = 'w'
+        GLabel_980.place(x=270,y=0,width=220,height=30)
+
         GButton_878=tk.Button(root)
         GButton_878["activebackground"] = "#999999"
         GButton_878["activeforeground"] = "#000000"
@@ -114,21 +130,30 @@ class UIApp:
         GButton_878["justify"] = "center"
         GButton_878["text"] = "Data Converter"
         GButton_878["relief"] = "raised"
-        GButton_878.place(x=280,y=350,width=130,height=40)
+        GButton_878.place(x=336,y=350,width=154,height=40)
         GButton_878["command"] = self.GButton_878_command
 
-        # Message #######################################
-        self.GMessage_707_Var = tk.StringVar()
-        self.GMessage_707_Var.set('Message')
-        self.GMessage_707=tk.Label(root)
+        # Message
+        global GLabel_819
+        GLabel_819=tk.Label(root)
+        ft = tkFont.Font(family='Times',size=12)
+        GLabel_819["font"] = ft
+        GLabel_819["fg"] = "#333333"
+        GLabel_819["justify"] = "left"
+        GLabel_819["text"] = "Message: "
+        GLabel_819["anchor"] = 'w'
+        GLabel_819.place(x=10,y=320,width=310,height=25)
+
+        # Input file list
+        global GListBox_56
+        GListBox_56=tk.Listbox(root)
+        GListBox_56["borderwidth"] = "1px"
         ft = tkFont.Font(family='Times',size=14)
-        self.GMessage_707["font"] = ft
-        self.GMessage_707["fg"] = "#333333"
-        self.GMessage_707["justify"] = "left"
-        self.GMessage_707["text"] = "Message"
-        self.GMessage_707["relief"] = "ridge"
-        self.GMessage_707.place(x=270,y=30,width=140,height=150)
-        self.GMessage_707['textvariable'] = self.GMessage_707_Var
+        GListBox_56["font"] = ft
+        GListBox_56["fg"] = "#333333"
+        GListBox_56["justify"] = "left"
+        GListBox_56["relief"] = "ridge"
+        GListBox_56.place(x=270,y=30,width=220,height=150)
 
         # IGES check box #################################
         # Default Value
@@ -142,7 +167,7 @@ class UIApp:
         self.GCheckBox_402["fg"] = "#333333"
         self.GCheckBox_402["justify"] = "center"
         self.GCheckBox_402["text"] = "IGES"
-        self.GCheckBox_402.place(x=345,y=315,width=65,height=35)
+        self.GCheckBox_402.place(x=425,y=315,width=65,height=35)
         self.GCheckBox_402["variable"] = self.GCheckBox_402_Var
         self.GCheckBox_402["command"] = self.GCheckBox_402_command
 
@@ -158,7 +183,7 @@ class UIApp:
         self.GCheckBox_75["fg"] = "#333333"
         self.GCheckBox_75["justify"] = "center"
         self.GCheckBox_75["text"] = "STEP"
-        self.GCheckBox_75.place(x=275,y=315,width=65,height=35)
+        self.GCheckBox_75.place(x=350,y=315,width=65,height=35)
         self.GCheckBox_75["variable"] = self.GCheckBox_75_Var
         self.GCheckBox_75["command"] = self.GCheckBox_75_command
 
@@ -231,7 +256,7 @@ class UIApp:
         self.GLineEdit_533["fg"] = "#333333"
         self.GLineEdit_533["justify"] = "left"
         self.GLineEdit_533["text"] = ""
-        self.GLineEdit_533.place(x=160,y=190,width=250,height=35)
+        self.GLineEdit_533.place(x=160,y=190,width=330,height=35)
         self.GLineEdit_533.insert(0, my_settings['FreeCAD_path'])
 
         self.GLineEdit_664=tk.Entry(root)
@@ -241,7 +266,7 @@ class UIApp:
         self.GLineEdit_664["fg"] = "#333333"
         self.GLineEdit_664["justify"] = "left"
         self.GLineEdit_664["text"] = ""
-        self.GLineEdit_664.place(x=160,y=230,width=250,height=35)
+        self.GLineEdit_664.place(x=160,y=230,width=330,height=35)
         self.GLineEdit_664.insert(0, my_settings['input_path'])
 
         self.GLineEdit_517=tk.Entry(root)
@@ -251,7 +276,7 @@ class UIApp:
         self.GLineEdit_517["fg"] = "#333333"
         self.GLineEdit_517["justify"] = "left"
         self.GLineEdit_517["text"] = ""
-        self.GLineEdit_517.place(x=160,y=270,width=250,height=35)
+        self.GLineEdit_517.place(x=160,y=270,width=330,height=35)
         self.GLineEdit_517.insert(0, my_settings['output_path'])
 
         # Save Settings Button
@@ -262,18 +287,18 @@ class UIApp:
         GButton_657["fg"] = "#000000"
         GButton_657["justify"] = "center"
         GButton_657["text"] = "Save Settings"
-        GButton_657.place(x=10,y=350,width=130,height=40)
+        GButton_657.place(x=10,y=350,width=154,height=40)
         GButton_657["command"] = self.GButton_657_command
 
-        # Clear Input Button
+        # Clear All Button
         GButton_290=tk.Button(root)
         GButton_290["bg"] = "#efefef"
         ft = tkFont.Font(family='Times',size=14)
         GButton_290["font"] = ft
         GButton_290["fg"] = "#000000"
         GButton_290["justify"] = "center"
-        GButton_290["text"] = "Clear Input"
-        GButton_290.place(x=145,y=350,width=130,height=40)
+        GButton_290["text"] = "Clear All"
+        GButton_290.place(x=173,y=350,width=154,height=40)
         GButton_290["command"] = self.GButton_290_command
 
     # IGES add or remove
@@ -325,14 +350,29 @@ class UIApp:
         json_edit('settings.json', 'input_path', input_path)
         json_edit('settings.json', 'output_path', output_path)
 
+        # Send message
+        GLabel_819["text"] = "Message: New settings have been saved."
+
     #######################################
     # Clear Input Button Click
     def GButton_290_command(self):
-        print("Clear Input")
-        
-        input_files = get_input_file()
-        print(input_files)
 
+        MsgBox = tk.messagebox.askquestion ('Delete Confirm.','Are you sure you want to delete all input files?',icon = 'warning')
+        if MsgBox == 'yes':
+            my_settings = read_my_settings()
+
+            error = []
+            error += clear_folder(my_settings['input_path'])
+            error += clear_folder(my_settings['output_path'])
+            if error:
+                GLabel_819["text"] = "Message: Some files could not be deleted."
+            else:
+                GLabel_819["text"] = "Message: Input and output files has been deleted."
+        else:
+            pass
+
+
+    #######################################
     # Data Converter Button Click
     def GButton_878_command(self, *args):
 
@@ -343,21 +383,27 @@ class UIApp:
         input_files = get_input_file()
         
         # Meshlab
-        self.GMessage_707_Var.set('Meshlap\nProcessing')
+        GLabel_819["text"] = "Message: Start converting data (Meshlab) ..."
         for file_path in input_files:
             
             mesh_filter(file_path)
 
         # Freecad Convert: Call run bat file because FreeCAD App conflict with Tkinter
-        self.GMessage_707_Var.set('FreeCAD\nProcessing')
+        GLabel_819["text"] = "Message: Start converting data (FreeCAD) ..."
         p = Popen("run_converter2.bat", cwd=r"{}".format(root_path))
         stdout, stderr = p.communicate()
 
+        # Clear temporary file
+        my_settings = read_my_settings()
+        clear_folder(my_settings['processing_path'])
+        clear_folder("{}\\FreeCadTemporary".format(my_settings['processing_path']))
+
         # Send message
-        self.GMessage_707_Var.set('Completed')
+        GLabel_819["text"] = "Message: Complete data conversion."
 
 
-##############################################  
+##############################################
+# Return list input file (full path)
 def get_input_file():
 
     # Read Input path
@@ -368,11 +414,31 @@ def get_input_file():
 
     input_files = []
     for file in all_files:
-        file_type = os.path.splitext(file)[1]
+        #file_type = os.path.splitext(file)[1]
         if os.path.splitext(file)[1] in ['.3ds', '.ply', '.stl', '.obj', '.qobj', '.off', '.ptx']:
             input_files.append(file)
     return input_files
 
+##############################################
+# Return list input file (file name)
+def get_input_file_name():
+
+    # Read Input path
+    my_settings = read_my_settings()
+    input_path = my_settings['input_path']
+
+    all_files = absoluteFilePaths(input_path)
+
+    input_files = []
+    for file in all_files:
+        if os.path.splitext(file)[1] in ['.3ds', '.ply', '.stl', '.obj', '.qobj', '.off', '.ptx']:
+            file_name = ntpath.basename(file)
+            if len(file_name) > 20:
+                file_name = file_name[0:9] + '...' + file_name[-8:len(file_name)]
+            input_files.append(file_name)
+    return input_files
+
+    #input_file_name = ntpath.basename(file).split('.')[0]
 
 ##############################################
 def json_edit(json_path, key, value):
@@ -387,18 +453,29 @@ def json_edit(json_path, key, value):
     a_file = open(json_path, "w")
     json.dump(json_object, a_file)
     a_file.close()
-    
+
+##############################################
+# Refresher UI every 1 second...
+def Refresher():
+
+    # Update file list
+    global GListBox_56
+    GListBox_56.delete(0, END)          # Clear list box
+    show_list = get_input_file_name()   # Get list file
+    GListBox_56.insert(0, *show_list)   # Show
+    root.after(2000, Refresher)         # Refresher every 1s
 
 ##############################################
 if __name__ == "__main__":
 
-    # Show settings
-    my_print('MY SETTINGS')
-    for key in my_settings:
-        print('++++++++++++++++++++++++++++++++++++++')
-        print("{}: {}".format(key, my_settings[key]))
+    # # Show settings
+    # my_print('MY SETTINGS')
+    # for key in my_settings:
+    #     print('++++++++++++++++++++++++++++++++++++++')
+        # print("{}: {}".format(key, my_settings[key]))
 
     # Run UI
     root = tk.Tk()
     app = UIApp(root)
+    Refresher()
     root.mainloop()

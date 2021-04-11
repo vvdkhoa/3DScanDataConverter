@@ -1,0 +1,1 @@
+wscript.exe "invisible.vbs" "run_ui.bat"
