@@ -17,9 +17,10 @@ def mesh_filter(file_path):
 
     my_settings = read_my_settings()
 
-    # Read stl file
+    # Create a new MeshSet
     ms = pymeshlab.MeshSet()
-    #ms.load_new_mesh("{}\\input.stl".format(my_settings['input_path']))
+
+    # Load a new mesh
     ms.load_new_mesh(file_path)
 
     # Close vertices
@@ -49,5 +50,16 @@ def mesh_filter(file_path):
     
 ##################################
 if __name__ == '__main__':
-    
     pass
+
+
+#   PyMeshLab
+#   All rights reserved.
+#
+#   VCGLib  http://www.vcglib.net                                     o o
+#   Visual and Computer Graphics Library                            o     o
+#                                                                  _   O  _
+#   Paolo Cignoni                                                    \/)\/
+#   Visual Computing Lab  http://vcg.isti.cnr.it                    /\/|
+#   ISTI - Italian National Research Council                           |
+#   Copyright(C) 2020       
