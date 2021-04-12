@@ -1,0 +1,107 @@
+{
+    "FreeCAD_path": "C:\\Program Files\\FreeCAD 0.18\\bin", 
+    "Scan_Data_Converter": {
+        "JA": "スキャンデータ変換ツール",
+        "EN": "Scan Data Converter"
+        },
+    "Settings": {
+        "JA": "設定：",
+        "EN": "SETTINGS:"
+        },
+    "FreeCAD_Path": {
+        "JA": "FreeCAD パス",
+        "EN": "FreeCAD Path"
+        },
+    "HC_Laplacian_Smooth": {
+        "JA": "HC Laplacian Smooth",
+        "EN": "HC Laplacian Smooth"
+        },
+    "Reconstruction_Depth": {
+        "JA": "Reconstruction Depth",
+        "EN": "Reconstruction Depth"
+        },
+    "Target_Facenum": {
+        "JA": "表面総数",
+        "EN": "Target Face Number"
+        },
+    "Shape_Tolerance": {
+        "JA": "縫い合わせ公差",
+        "EN": "Shape Tolerance"
+        },
+    "Input_File_List": {
+        "JA": "ファイル一覧：",
+        "EN": "FILE LIST:"
+        },
+    "Data_Converter": {
+        "JA": "データ変換",
+        "EN": "Data Converter"
+        },
+    "Message": {
+        "JA": "メッセージ:",
+        "EN": "Message:"
+        },
+    "Input_Folder": {
+        "JA": "入力フォルダー",
+        "EN": "Input Folder"
+        },
+    "Save_As": {
+        "JA": "出力フォルダー",
+        "EN": "Save As"
+        },
+    "Save_Settings": {
+        "JA": "設定保存",
+        "EN": "Save Settings"
+        },
+    "Clear_All": {
+        "JA": "すべて削除",
+        "EN": "Clear All"
+        },
+    "Message_Save_New_Setting": {
+        "JA": "新しい設定が保存されました。",
+        "EN": "New settings have been saved."
+        },
+    "Delete_Confirm": {
+        "JA": "削除確認",
+        "EN": "Delete Confirm"
+        },
+    "Delete_All_Files?": {
+        "JA": "すべてのファイルを削除してもよろしいですか。",
+        "EN": "Are you sure you want to delete all files?"
+        },
+    "Message_Some_files_could_not_be_deleted": {
+        "JA": "一部のファイルを削除できませんでした。",
+        "EN": "Some files could not be deleted."
+        },
+    "Message_Input_and_output_files_has_been_deleted": {
+        "JA": "すべてのファイルが削除されました。",
+        "EN": "Input and output files has been deleted."
+        },
+    "Message_Start_converting_data_Meshlab": {
+        "JA": "データの変換を開始します（Meshlab）。",
+        "EN": "Start converting data (Meshlab) ..."
+        },
+    "Message_Start_converting_data_FreeCAD": {
+        "JA": "データの変換を開始します（FreeCAD）。",
+        "EN": "Start converting data (FreeCAD) ..."
+        },
+    "Message_Complete_data_conversion": {
+        "JA": "データ変換が完了しました。",
+        "EN": "Data conversion is complete."
+        },
+    "Language_Setting": {
+        "JA": "言語設定",
+        "EN": "Language Setting"
+        },
+    "Please_restart_the_application_to_apply_a_new_language": {
+        "JA": "新しい言語を適用するのに、アプリケーションを再起動してください。",
+        "EN": "Please restart the application to apply a new language."
+        },
+    "Data_Conversion_Completed": {
+        "JA": "データ変換完了",
+        "EN": "Data_Conversion_Completed"
+        },
+    "Data_Conversion_Is_Complete": {
+        "JA": "データ変換が完了しました。",
+        "EN": "Data conversion is complete."
+        }
+}
