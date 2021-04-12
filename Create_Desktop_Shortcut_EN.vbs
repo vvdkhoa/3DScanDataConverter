@@ -4,13 +4,21 @@ Set oWS = WScript.CreateObject("WScript.Shell")
 '
 ' Create desktop shortcut path
 strDesktop = oWS.SpecialFolders("Desktop")
-sLinkFile = strDesktop + "\DataConverter.LNK"
+sLinkFile = strDesktop + "\ScanDataConverter.LNK"
 '
-' Get absolute path from Relative path
-strBatFile ="ScanDataConverter.LNK"
+' Get absolute path of bat file
+strBatFile ="Scripts\ScanDataConverter.bat"
 dim fso, fullPathToBat
 set fso = CreateObject("Scripting.FileSystemObject")
 fullPathToBat = fso.GetAbsolutePathName(strBatFile)
+'
+'Get absolute IconLocation path
+strIconLocation = "Scripts\Icons\icon.ico"
+fullPathToIconLocation = fso.GetAbsolutePathName(strIconLocation)
+'
+'Get absolute WorkingDirectory path
+strWorkingDirectory = "Scripts\"
+fullPathToWorkingDirectory = fso.GetAbsolutePathName(strWorkingDirectory)
 '
 ' Create shortcut
 Set oLink = oWS.CreateShortcut(sLinkFile)
@@ -19,6 +27,7 @@ Set oLink = oWS.CreateShortcut(sLinkFile)
  '  oLink.Description = "MyProgram"   
  '  oLink.HotKey = "ALT+CTRL+F"
  '  oLink.IconLocation = "C:\Program Files\MyApp\MyProgram.EXE, 2"
+    oLink.IconLocation = fullPathToIconLocation
  '  oLink.WindowStyle = "1"   
- '  oLink.WorkingDirectory = "C:\Program Files\MyApp"
+    oLink.WorkingDirectory = fullPathToWorkingDirectory
 oLink.Save

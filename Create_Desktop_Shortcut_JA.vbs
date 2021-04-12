@@ -4,7 +4,7 @@ Set oWS = WScript.CreateObject("WScript.Shell")
 '
 ' Create desktop shortcut path
 strDesktop = oWS.SpecialFolders("Desktop")
-sLinkFile = strDesktop + "\Scanãƒ‡ãƒ¼ã‚¿å¤‰æ›.LNK"
+sLinkFile = strDesktop + "\Scanƒf[ƒ^•ÏŠ·.LNK"
 '
 ' Get absolute path of bat file
 strBatFile ="Scripts\ScanDataConverter.bat"

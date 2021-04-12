@@ -4,7 +4,6 @@ import pymeshlab
 
 import ntpath
 
-
 # Import HELP function
 from my_help import my_print, read_my_settings
 
@@ -47,11 +46,9 @@ def mesh_filter(file_path):
 
     return save_path
 
-    
 ##################################
 if __name__ == '__main__':
     pass
-
 
 #   PyMeshLab
 #   All rights reserved.
