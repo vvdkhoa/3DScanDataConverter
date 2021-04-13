@@ -32,8 +32,8 @@ def convert_stl_iges(file_path):
 
     # Read STL
     Mesh.open(u"{}".format(tem_file_path))
-    App.setActiveDocument("Unnamed") #
-    App.ActiveDocument=App.getDocument("Unnamed") #
+    App.setActiveDocument("Unnamed")
+    App.ActiveDocument=App.getDocument("Unnamed")
 
     # MakeShape
     FreeCAD.getDocument("Unnamed").addObject("Part::Feature","filtered_mesh001")

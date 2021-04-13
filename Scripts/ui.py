@@ -10,6 +10,8 @@ import json
 import sys
 import os
 
+MY_SYSTEM_ERROR = []
+
 # For run .bat file
 from subprocess import Popen
 
@@ -21,7 +23,12 @@ sys.path.insert(1, root_path)
 
 
 # Meshlab function
-from converter1 import mesh_filter
+#from converter1 import mesh_filter
+try:
+    from converter1 import mesh_filter
+except ImportError:
+    MY_SYSTEM_ERROR.append('Meshlab Import error')
+    print('ui.py, Meshlab Import error')
 
 # Import HELP function
 from my_help import my_print, read_my_settings, absoluteFilePaths, clear_folder, read_translate
@@ -251,7 +258,7 @@ class UIApp:
         self.GLineEdit_770["justify"] = "left"
         self.GLineEdit_770["text"] = ""
         self.GLineEdit_770.place(x=185,y=70,width=70,height=35)
-        self.GLineEdit_770.insert(0, my_settings['poisson_iters'])
+        self.GLineEdit_770.insert(0, my_settings['poisson_depth'])
 
         self.GLineEdit_472=tk.Entry(root)
         self.GLineEdit_472["borderwidth"] = "1px"
@@ -359,7 +366,7 @@ class UIApp:
 
         # Get enter data from UI
         hc_laplacian_smooth_time = int(self.GLineEdit_253.get())
-        poisson_iters = int(self.GLineEdit_770.get())
+        poisson_depth = int(self.GLineEdit_770.get())
         targetfacenum = int(self.GLineEdit_472.get())
         shape_tolerance = float(self.GLineEdit_658.get())
         FreeCAD_path = self.GLineEdit_533.get()
@@ -369,7 +376,7 @@ class UIApp:
 
         # Save Setting Data to Json
         json_edit('settings.json', 'hc_laplacian_smooth_time', hc_laplacian_smooth_time)
-        json_edit('settings.json', 'poisson_iters', poisson_iters)
+        json_edit('settings.json', 'poisson_depth', poisson_depth)
         json_edit('settings.json', 'targetfacenum', targetfacenum)
         json_edit('settings.json', 'shape_tolerance', shape_tolerance)
         json_edit('settings.json', 'FreeCAD_path', FreeCAD_path)
@@ -415,8 +422,15 @@ class UIApp:
         # Meshlab
         GLabel_819["text"] = TEXT['Message_Start_converting_data_Meshlab'][language]
         for file_path in input_files:
-            
-            mesh_filter(file_path)
+            #mesh_filter(file_path)
+            try:
+                mesh_filter(file_path)
+            except:
+                if 'Meshlab Import error' in MY_SYSTEM_ERROR:
+                    tk.messagebox.showinfo('Error', 'Meshlab Import error')
+                else:
+                    tk.messagebox.showinfo('Error', 'Meshlab Processing Error')
+                continue
 
             # Freecad Convert: Call run bat file because FreeCAD App conflict with Tkinter
             GLabel_819["text"] = TEXT['Message_Start_converting_data_FreeCAD'][language]
@@ -469,8 +483,6 @@ def get_input_file_name():
             input_files.append(file_name)
     return input_files
 
-    #input_file_name = ntpath.basename(file).split('.')[0]
-
 ##############################################
 def json_edit(json_path, key, value):
 
@@ -499,11 +511,11 @@ def Refresher():
 ##############################################
 if __name__ == "__main__":
 
-    # # Show settings
-    # my_print('MY SETTINGS')
-    # for key in my_settings:
-    #     print('++++++++++++++++++++++++++++++++++++++')
-        # print("{}: {}".format(key, my_settings[key]))
+    # Show settings
+    my_print('MY SETTINGS')
+    for key in my_settings:
+        print('++++++++++++++++++++++++++++++++++++++')
+        print("{}: {}".format(key, my_settings[key]))
 
     # Run UI
     root = tk.Tk()
