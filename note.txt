@@ -1,0 +1,7 @@
+Check 1
+  # Close vertices
+    ms.merge_close_vertices(threshold=0.1)
+
+    ms.merge_close_vertices(threshold=1) =1 NOT WORKING, NOT USE
+
+    preservetopology=True  > Default False

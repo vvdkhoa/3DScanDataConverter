@@ -24,10 +24,15 @@ def read_my_settings():
 
  ##############################
 def read_translate():
-    
-    with open('translate.json', encoding="utf8", errors='ignore') as json_file:
-        json_str = json_file.read()
-        translate = json.loads(json_str)
+
+    try:
+        with open('translate.json') as json_file:
+            json_str = json_file.read()
+            translate = json.loads(json_str)
+    except:
+        with open('translate.json', encoding="utf8", errors='ignore') as json_file:
+            json_str = json_file.read()
+            translate = json.loads(json_str)
         
     return translate
 

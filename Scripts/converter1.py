@@ -1,6 +1,6 @@
 # Meshlab
 import pymeshlab
-# import pymeshlab    # Import 2 times to avoid exception
+import pymeshlab    # Import 2 times to avoid exception
 
 import ntpath
 
@@ -23,20 +23,32 @@ def mesh_filter(file_path):
     ms.load_new_mesh(file_path)
 
     # Close vertices
-    ms.merge_close_vertices(threshold=1)
+    ms.merge_close_vertices(threshold=my_settings['merge_close_vertices_threshold'])
+
+    #ms.remove_unreferenced_vertices()
 
     # HC Smooth
     for i in range(my_settings['hc_laplacian_smooth_time']):
         ms.hc_laplacian_smooth()
 
     # Filling holes poisson
-    ms.surface_reconstruction_screened_poisson(
-        visiblelayer=False, depth=10, fulldepth=5, cgdepth=0, scale=1.1, samplespernode=1.5, pointweight=4,
-        iters=my_settings['poisson_iters'],
-        confidence=False, preclean=True)     # preclean= False
-    
+    try:
+        print('Try surface_reconstruction_screened_poisson with preclean=False')
+        ms.surface_reconstruction_screened_poisson( visiblelayer=False,
+            depth=my_settings['poisson_depth'], fulldepth=5, cgdepth=0, scale=1.1, samplespernode=1.5,
+            pointweight=4, iters=8, confidence=False, preclean=False)
+    except:
+        print('Surface_reconstruction_screened_poisson preclean=True')
+        ms.surface_reconstruction_screened_poisson( visiblelayer=False,
+            depth=my_settings['poisson_depth'], fulldepth=5, cgdepth=0, scale=1.1, samplespernode=1.5,
+            pointweight=4, iters=8, confidence=False, preclean=True)
+
     # Reduce face numble
-    ms.simplification_quadric_edge_collapse_decimation(targetfacenum=my_settings['targetfacenum'])
+    ms.simplification_quadric_edge_collapse_decimation(
+        targetfacenum=my_settings['targetfacenum'], targetperc=0, qualitythr=0.3,
+        preserveboundary=False, boundaryweight=1, preservenormal=False, preservetopology=False,
+        optimalplacement=True, planarquadric=False, planarweight=0.001, qualityweight=False,
+        autoclean=True, selected =False)
 
     # Save project
     input_file_name = ntpath.basename(file_path).split('.')[0]
