@@ -103,5 +103,25 @@
     "Data_Conversion_Is_Complete": {
         "JA": "データ変換が完了しました。",
         "EN": "Data conversion is complete."
+        },
+    "Error": {
+        "JA": "エラー",
+        "EN": "Error"
+        },
+    "Meshlab_Import_Error": {
+        "JA": "Meshlab Import Error",
+        "EN": "Meshlab Import エラー"
+        },
+    "Meshlab_Processing_Error": {
+        "JA": "Meshlab Processing エラー。\nアプリを再起動して、ファイルを個別に変換してみてください。",
+        "EN": "Meshlab Processing Error.\nPlease restart app and try converting the files individually."
+        },
+    "Call_FreeCAD_Error_Please_Restart_App": {
+        "JA": "エラーが発生しました。アプリを再起動して、\n「エラー処理」のボタンを押してください。",
+        "EN": "Detected an error.\nPlease restart app and press Error handling button."
+        },
+    "Error_Handling": {
+        "JA": "エラー処理",
+        "EN": "Error Handling"
         }
 }

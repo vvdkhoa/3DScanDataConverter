@@ -53,8 +53,9 @@ def clear_folder(folder_path):
             try:
                 os.remove(os.path.join(folder_path, f))
             except PermissionError:
-                print("Can not remove: {}".format(f))
-                error.append(f)
+                if f != 'FreeCadTemporary':
+                    print("Can not remove: {}".format(f))
+                    error.append(f)
     return error
 
 ##############################
