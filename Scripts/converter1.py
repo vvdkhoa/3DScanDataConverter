@@ -1,6 +1,6 @@
 # Meshlab
 import pymeshlab
-import pymeshlab    # Import 2 times to avoid exception
+# import pymeshlab    # Import 2 times to avoid exception
 
 import ntpath
 
@@ -17,6 +17,7 @@ def mesh_filter(file_path):
     my_settings = read_my_settings()
 
     # Create a new MeshSet
+    
     ms = pymeshlab.MeshSet()
 
     # Load a new mesh
@@ -54,12 +55,15 @@ def mesh_filter(file_path):
     input_file_name = ntpath.basename(file_path).split('.')[0]
     
     save_path = "{}\\{}_Converted.stl".format(my_settings['processing_path'], input_file_name)
+
     ms.save_current_mesh(save_path)
 
     return save_path
 
 ##################################
 if __name__ == '__main__':
+    ms = None
+    ms = pymeshlab.MeshSet()
     pass
 
 #   PyMeshLab

@@ -4,6 +4,7 @@ from tkinter.constants import END
 import tkinter.font as tkFont
 from tkinter import messagebox
 from tkinter import ttk
+import pymeshlab
 
 from time import sleep
 import json
@@ -57,6 +58,8 @@ my_font='Helvetica'
 
 #########################################
 class UIApp:
+
+    global root_path
 
     def __init__(self, root):
         #setting title
@@ -145,7 +148,7 @@ class UIApp:
         GButton_878["justify"] = "center"
         GButton_878["text"] = TEXT["Data_Converter"][language]
         GButton_878["relief"] = "raised"
-        GButton_878.place(x=336,y=350,width=154,height=40)
+        GButton_878.place(x=377,y=350,width=115,height=40)
         GButton_878["command"] = self.GButton_878_command
 
         # Message
@@ -318,7 +321,7 @@ class UIApp:
         GButton_657["fg"] = "#000000"
         GButton_657["justify"] = "center"
         GButton_657["text"] = TEXT["Save_Settings"][language]
-        GButton_657.place(x=10,y=350,width=154,height=40)
+        GButton_657.place(x=8,y=350,width=115,height=40)
         GButton_657["command"] = self.GButton_657_command
 
         # Clear All Button
@@ -329,8 +332,19 @@ class UIApp:
         GButton_290["fg"] = "#000000"
         GButton_290["justify"] = "center"
         GButton_290["text"] = TEXT["Clear_All"][language]
-        GButton_290.place(x=173,y=350,width=154,height=40)
+        GButton_290.place(x=131,y=350,width=115,height=40)
         GButton_290["command"] = self.GButton_290_command
+
+        # FreeCAD
+        GButton_894=tk.Button(root)
+        GButton_894["bg"] = "#efefef"
+        ft = tkFont.Font(family='Times',size=14)
+        GButton_894["font"] = ft
+        GButton_894["fg"] = "#000000"
+        GButton_894["justify"] = "center"
+        GButton_894["text"] = TEXT["Error_Handling"][language]
+        GButton_894.place(x=254,y=350,width=115,height=40)
+        GButton_894["command"] = self.GButton_894_command
 
     # IGES add or remove
     def GCheckBox_402_command(self):
@@ -401,6 +415,8 @@ class UIApp:
             error = []
             error += clear_folder(my_settings['input_path'])
             error += clear_folder(my_settings['output_path'])
+            error += clear_folder(my_settings['processing_path'])
+            error += clear_folder("{}\\FreeCadTemporary\\".format(my_settings['processing_path']))
             if error:
                 GLabel_819["text"] = TEXT['Message_Some_files_could_not_be_deleted'][language]
             else:
@@ -421,31 +437,63 @@ class UIApp:
         
         # Meshlab
         GLabel_819["text"] = TEXT['Message_Start_converting_data_Meshlab'][language]
+
         for file_path in input_files:
-            #mesh_filter(file_path)
+
             try:
                 mesh_filter(file_path)
             except:
                 if 'Meshlab Import error' in MY_SYSTEM_ERROR:
-                    tk.messagebox.showinfo('Error', 'Meshlab Import error')
+                    tk.messagebox.showinfo(TEXT['Error'][language], TEXT['Meshlab_Import_Error'][language])
                 else:
-                    tk.messagebox.showinfo('Error', 'Meshlab Processing Error')
+                    tk.messagebox.showinfo(TEXT['Error'][language], TEXT['Meshlab_Processing_Error'][language])
                 continue
 
-            # Freecad Convert: Call run bat file because FreeCAD App conflict with Tkinter
-            GLabel_819["text"] = TEXT['Message_Start_converting_data_FreeCAD'][language]
+
+            ####### WORKING WITH THE FIRST FILE ONLY BECAUSE MESHLAP WILL BE SAVE THE SAME FILE
+            break
+            #######
+        
+        # Freecad Convert: Call run bat file because FreeCAD App conflict with Tkinter
+        GLabel_819["text"] = TEXT['Message_Start_converting_data_FreeCAD'][language]
+        try:
+            # Call run FreeCAD
+            #raise Exception('spam', 'eggs')
             p = Popen("run_converter2.bat", cwd=r"{}".format(root_path))
             stdout, stderr = p.communicate()
 
             # Clear temporary file
             my_settings = read_my_settings()
             clear_folder(my_settings['processing_path'])
-            clear_folder("{}\\FreeCadTemporary".format(my_settings['processing_path']))
+            clear_folder("{}\\FreeCadTemporary\\".format(my_settings['processing_path']))
 
-        # Send message
-        GLabel_819["text"] = TEXT['Message_Complete_data_conversion'][language]
-        MsgBox = tk.messagebox.showinfo(TEXT['Data_Conversion_Completed'][language], TEXT['Data_Conversion_Is_Complete'][language])
+            # Send message
+            GLabel_819["text"] = TEXT['Message_Complete_data_conversion'][language]
+            MsgBox = tk.messagebox.showinfo(TEXT['Data_Conversion_Completed'][language], TEXT['Data_Conversion_Is_Complete'][language])
+        except:
+            tk.messagebox.showinfo(TEXT['Error'][language], TEXT['Call_FreeCAD_Error_Please_Restart_App'][language])
 
+
+    #######################################
+    # Error Handling Button Click FREE CAD
+    def GButton_894_command(self):
+
+        try:
+            # Call run FreeCAD
+            p = Popen("run_converter2.bat", cwd=r"{}".format(root_path))
+            stdout, stderr = p.communicate()
+
+            # Clear temporary file
+            my_settings = read_my_settings()
+            clear_folder(my_settings['processing_path'])
+            clear_folder("{}\\FreeCadTemporary\\".format(my_settings['processing_path']))
+
+            # Send message
+            GLabel_819["text"] = TEXT['Message_Complete_data_conversion'][language]
+            MsgBox = tk.messagebox.showinfo(TEXT['Data_Conversion_Completed'][language], TEXT['Data_Conversion_Is_Complete'][language])
+        except:
+            tk.messagebox.showinfo(TEXT['Error'][language], TEXT['Call_FreeCAD_Error_Please_Restart_App'][language])
+            
 
 ##############################################
 # Return list input file (full path)
@@ -507,6 +555,11 @@ def Refresher():
     show_list = get_input_file_name()   # Get list file
     GListBox_56.insert(0, *show_list)   # Show
     root.after(2000, Refresher)         # Refresher every 1s
+
+
+class MyMSClass(object):
+    def __init__(self, number):
+        self.number = number
 
 ##############################################
 if __name__ == "__main__":
