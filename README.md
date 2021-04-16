@@ -1,6 +1,6 @@
 ## 3D Scan Data Converters
 #### This tool uses MeshLab and freecad to convert stl scanned data into steps or iges.
-#### Note: Use only with each stl file one by one
+#### Note: Use only with each stl file one by one.
 
 ### User Requirements
 1. Windowns 10 64 bit
@@ -9,16 +9,16 @@
 ### Using
 1. Download packet
 2. Crease shortcut:
-#### Way 1: Create desktop shortcut and using
-Run Create_Desktop_Shortcut_EN.vbs or<br/>
-Run Create_Desktop_Shortcut_JA.vbs
-#### Way 2:
-Run Scripts\ScanDataConverter.bat
-#### Way 3: (CMD Debug)
-cd \3DScanDataConverter\Scripts
-run_ui<br/>
-run_converter1  (check meshlap import)<br/>
-run_converter2  (check freeCAD import)
+    Way 1: Create desktop shortcut and using
+      Run Create_Desktop_Shortcut_EN.vbs or<br/>
+      Run Create_Desktop_Shortcut_JA.vbs
+    Way 2:
+      Run Scripts\ScanDataConverter.bat
+    Way 3: (CMD Debug)
+      cd \3DScanDataConverter\Scripts<br/>
+      run_ui<br/>
+      run_converter1  (check meshlap import)<br/>
+      run_converter2  (check freeCAD import)
 
 ### Settings
 settings.json (Setting can save from tkinter UI)
