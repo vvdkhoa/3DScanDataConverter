@@ -8,12 +8,15 @@
 
 ### Using
 1. Download packet
+
 2. Crease shortcut:<br/>
     Way 1: Create desktop shortcut and using<br/>
       Run Create_Desktop_Shortcut_EN.vbs or<br/>
       Run Create_Desktop_Shortcut_JA.vbs<br/>
+
     Way 2:<br/>
       Run Scripts\ScanDataConverter.bat<br/>
+
     Way 3: (CMD Debug)<br/>
       cd \3DScanDataConverter\Scripts<br/>
       run_ui<br/>
