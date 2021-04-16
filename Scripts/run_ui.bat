@@ -1,1 +1,1 @@
-Python3.6.6\python ui.py
+Python3.9.4\python ui.py

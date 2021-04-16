@@ -4,7 +4,6 @@ from tkinter.constants import END
 import tkinter.font as tkFont
 from tkinter import messagebox
 from tkinter import ttk
-import pymeshlab
 
 from time import sleep
 import json
