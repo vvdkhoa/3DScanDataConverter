@@ -8,17 +8,17 @@
 
 ### Using
 1. Download packet
-2. Crease shortcut:
-    Way 1: Create desktop shortcut and using
+2. Crease shortcut:<br/>
+    Way 1: Create desktop shortcut and using<br/>
       Run Create_Desktop_Shortcut_EN.vbs or<br/>
-      Run Create_Desktop_Shortcut_JA.vbs
-    Way 2:
-      Run Scripts\ScanDataConverter.bat
-    Way 3: (CMD Debug)
+      Run Create_Desktop_Shortcut_JA.vbs<br/>
+    Way 2:<br/>
+      Run Scripts\ScanDataConverter.bat<br/>
+    Way 3: (CMD Debug)<br/>
       cd \3DScanDataConverter\Scripts<br/>
       run_ui<br/>
       run_converter1  (check meshlap import)<br/>
-      run_converter2  (check freeCAD import)
+      run_converter2  (check freeCAD import)<br/>
 
 ### Settings
 settings.json (Setting can save from tkinter UI)
